@@ -31,7 +31,7 @@ let mut b = "b"; // mutable
 let a = "a";
 let a = "b";
 ```
-これは値を変更しているわけではなく、再度束縛している。
+これは値を変更しているわけではなく、再度束縛している。(シャドウイング)
 
 ## 型の関数
 ```rust
@@ -64,5 +64,46 @@ println!("x = {} and y = {}", x, y);
 
 ----
 
-# ToDo
-https://doc.rust-lang.org/book/ch02-00-guessing-game-tutorial.html#generating-a-secret-number
+## cargo
+Cargo.tomlの`[dependencies]`に依存crateを追加することで簡単に依存関係を解決できる。
+
+```toml
+[dependencies]
+rand = "0.8.3"
+```
+のように`crate = "version"`と書く。
+versionは[semver](https://semver.org)である。
+versionは`0.8.3`と記述した場合、`^0.8.3`と同義で0.8.3以上で、0.9.0未満であることを表す。
+
+### build
+`cargo build`でcrateもダウンロードされビルドされる。
+ビルド済みのものは中間ファイルが生成されるので二度ビルドされない。
+
+### Cargo.lock
+crateは更に他のcrateに依存している場合が殆どだ。
+自身のpackageの依存関係に加えてdependenciesのcrateも含めたcrateの依存関係とversion固定することができる。
+
+### cargo update
+`cargo update` することで最新のcrateに更新することができる。
+Cargo.lockも更新される。
+
+## match
+```rust
+match value {
+    arm1 => expression,
+    arm2 => expression,
+    ...
+}
+```
+switchの強力版みたいなもの。
+値を持つenumの値を取り出すことも可能。例えばResultでは以下のように書ける。
+```rust
+loop {
+    let guess: u32 = match guess.trim().parse() {
+        Ok(num) => num,
+        Err(_) => {
+            println!("Please type a number!");
+        },
+    };
+}
+```
